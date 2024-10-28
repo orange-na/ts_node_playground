@@ -1,18 +1,24 @@
-import * as QRCode from "qrcode";
+import puppeteer, { Page } from "puppeteer";
 
-const generateQRCode = async (
-  data: string,
-  filename: string
-): Promise<void> => {
+async function getDate(page: Page, url: string) {
+  await page.goto(url, { waitUntil: "networkidle0" });
+
+  return await page.evaluate(() => {
+    const data = document.querySelector("h1.landing__top__child__description");
+    return data ? data.textContent : "";
+  });
+}
+
+!(async () => {
   try {
-    const qrCode = await QRCode.toFile(filename, data);
-    console.log(`QR Code generated successfully at: ${filename}`);
-  } catch (error) {
-    console.error("Error generating QR Code:", error);
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    const data = await getDate(page, "https://dot-mura.com/landing");
+    console.log(data); // 取得したテキストデータが表示されるはず
+
+    browser.close();
+  } catch (e) {
+    console.error(e);
   }
-};
-
-const dataToEncode = "https://www.example.com";
-const outputFileName = "./public/xample-qrcode.png";
-
-generateQRCode(dataToEncode, outputFileName);
+})();
