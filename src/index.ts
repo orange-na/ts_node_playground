@@ -10,8 +10,10 @@ async function getDate(page: Page, url: string) {
 }
 
 !(async () => {
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+  });
   try {
-    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     const data = await getDate(page, "https://dot-mura.com/landing");
@@ -20,5 +22,8 @@ async function getDate(page: Page, url: string) {
     browser.close();
   } catch (e) {
     console.error(e);
+  } finally {
+    await browser.close();
+    console.log("done");
   }
 })();

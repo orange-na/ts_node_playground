@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/usr/src/app
+    command: >
+      bash -c "npm install && 
+      npm run dev"
